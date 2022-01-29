@@ -1,0 +1,26 @@
+version: '3.0'
+services:
+  mvc-service:
+    image: bstraehle/mvc-app
+    ports:
+      - 8000:80
+    depends_on:
+      - restapi-service
+    networks:
+      - front-end
+      - back-end
+    deploy:
+      replicas: 1
+  restapi-service:
+    image: bstraehle/rest-api
+    ports:
+      - 8001:80
+    networks:
+      - back-end
+    deploy:
+      replicas: 1
+    cap_add:
+      - ALL
+networks:
+  front-end:
+  back-end:
