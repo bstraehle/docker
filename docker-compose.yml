@@ -1,6 +1,6 @@
 version: '3.0'
 services:
-  mvc-service:
+  mvcapp-service:
     image: bstraehle/mvc-app
     ports:
       - 8000:80
@@ -19,8 +19,6 @@ services:
       - back-end
     deploy:
       replicas: 1
-    cap_add:
-      - ALL
 networks:
   front-end:
   back-end:
