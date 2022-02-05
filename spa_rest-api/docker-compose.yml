@@ -1,6 +1,6 @@
 version: '3.0'
 services:
-  mvcapp-service:
+  spa-service:
     image: bstraehle/spa
     ports:
       - 8080:80
