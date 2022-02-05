@@ -16,5 +16,5 @@ docker-compose up
 ```
 URL:  
 ```
-localhost:8080
+localhost:4200
 ```
