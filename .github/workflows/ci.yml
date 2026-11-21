@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule:
+    # Weekly, to catch breaking changes in the :latest images.
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - stack: mvc-app_rest-api
+            urls: http://localhost:8000/ http://localhost:8000/Demo/List http://localhost:8001/Demo
+          - stack: spa_rest-api
+            urls: http://localhost:8080/ http://localhost:8001/Demo
+    defaults:
+      run:
+        working-directory: ${{ matrix.stack }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: docker compose config --quiet
+      - run: docker compose up --detach --quiet-pull
+      - name: Check endpoints
+        run: |
+          for url in ${{ matrix.urls }}; do
+            curl --fail --silent --show-error --retry 30 --retry-delay 2 --retry-all-errors --max-time 5 -o /dev/null "$url"
+            echo "OK $url"
+          done
+      - if: failure()
+        run: docker compose ps --all && docker compose logs
+      - if: always()
+        run: docker compose down
