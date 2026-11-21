@@ -1,5 +1,4 @@
 # MVC app + REST API. Run with: docker compose up -d
-name: mvc-app-rest-api
 
 x-hardening: &hardening
   restart: unless-stopped
@@ -17,8 +16,9 @@ services:
     image: ${REST_API_IMAGE:-bstraehle/rest-api:latest}
     # Non-root APP_UID of the .NET base image; the image itself doesn't set USER.
     user: "1654:1654"
+    # Published on localhost only: the demo API has no authentication.
     ports:
-      - "8001:8080"
+      - "127.0.0.1:8001:8080"
 
   mvc-app:
     <<: *hardening
@@ -28,6 +28,6 @@ services:
       # Reach the API over the Compose network instead of host.docker.internal.
       DEMO_API_HOST: http://rest-api:8080
     ports:
-      - "8000:8080"
+      - "127.0.0.1:8000:8080"
     depends_on:
       - rest-api

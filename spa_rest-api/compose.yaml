@@ -1,5 +1,4 @@
 # Angular SPA + REST API. Run with: docker compose up -d
-name: spa-rest-api
 
 x-hardening: &hardening
   restart: unless-stopped
@@ -17,7 +16,10 @@ services:
     user: "1654:1654"
     tmpfs:
       - /tmp
-    # The SPA calls the API from the browser at http://host.docker.internal:8001.
+    # The SPA calls the API from the browser at http://host.docker.internal:8001,
+    # which Docker Desktop maps to the host's LAN IP, so this port can't be
+    # limited to localhost. The demo API has no authentication: only run this
+    # stack on a trusted network.
     ports:
       - "8001:8080"
 
@@ -35,6 +37,6 @@ services:
       - /var/cache/nginx
       - /var/run
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
     depends_on:
       - rest-api

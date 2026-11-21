@@ -9,7 +9,7 @@ Run the demo apps locally with [Docker Compose](https://docs.docker.com/compose/
 | [`mvc-app_rest-api`](mvc-app_rest-api/compose.yaml) | [MVC app](https://github.com/bstraehle/dotnet-mvc-app) + [REST API](https://github.com/bstraehle/dotnet-rest-api) | http://localhost:8000, http://localhost:8001/swagger |
 | [`spa_rest-api`](spa_rest-api/compose.yaml) | [Angular SPA](https://github.com/bstraehle/angular-spa) + [REST API](https://github.com/bstraehle/dotnet-rest-api) | http://localhost:8080, http://localhost:8001/swagger |
 
-Both stacks publish the API on port 8001, so run one at a time.
+Both stacks publish the API on port 8001, so run one at a time. Ports are published on `localhost` only, except the SPA stack's API port (see below).
 
 ## Prerequisites
 
@@ -39,12 +39,16 @@ docker compose up -d
 
 Open http://localhost:8080. The SPA calls the API from your browser at `http://host.docker.internal:8001`, which resolves on Docker Desktop. On Docker Engine for Linux, add `127.0.0.1 host.docker.internal` to `/etc/hosts`.
 
+> Note: Docker Desktop maps `host.docker.internal` to your machine's LAN IP, so this stack publishes the API's port 8001 on all interfaces. The demo API has no authentication, so only run the SPA stack on a trusted network.
+
 Logs and cleanup
 
 ```shell
 docker compose logs -f
 docker compose down
 ```
+
+Upgrading from the old `docker-compose.yml` files: the services were renamed, so containers that are still running from the old version keep ports 8000, 8001, and 8080 busy. Start with `docker compose up -d --remove-orphans` to replace them.
 
 ## Configuration
 
